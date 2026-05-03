@@ -10,15 +10,12 @@ public class PlayerMovement : MonoBehaviour
 
     public float runSpeed;
     public float walkSpeed;
+    public float turnSpeed;
     private float speed;
     public Vector3 movementDirection;
     private float verticalVelocity;
     private bool isRunning;
-    [SerializeField] private Transform aim;
-    [SerializeField] private LayerMask aimLayerMask;
-    private Vector3 lookingDirection;
-    private Vector2 moveInput;
-    private Vector2 aimInput;
+    public Vector2 moveInput {get; private set;}
 
     private void AssignInputEvent()
     {
@@ -26,9 +23,6 @@ public class PlayerMovement : MonoBehaviour
 
         controls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
         controls.Character.Movement.canceled += context => moveInput = Vector2.zero;
-
-        controls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
-        controls.Character.Aim.canceled += context => aimInput = Vector2.zero;
 
         controls.Character.Run.performed += context =>
         {
@@ -55,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         ApplyMovement();
-        AimTowardsMouse();
+        ApplyRotation();
         AnimatorControllers();
     }
 
@@ -71,19 +65,15 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isRunning", playRunAnimation);
     }
 
-    private void AimTowardsMouse()
+    private void ApplyRotation()
     {
-        Ray ray = Camera.main.ScreenPointToRay(aimInput);
+        Vector3 lookingDirection = player.aim.GetMouseInfo().point - transform.position;
+        lookingDirection.y = 0;
+        lookingDirection.Normalize();
 
-        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
-        {
-            lookingDirection = hitInfo.point - transform.position;
-            lookingDirection.y = 0;
-            lookingDirection.Normalize();
+        Quaternion desiredRotation = Quaternion.LookRotation(lookingDirection);
 
-            transform.forward = lookingDirection;
-            aim.position = new Vector3(hitInfo.point.x, transform.position.y + 1, hitInfo.point.z);
-        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, turnSpeed * Time.deltaTime);          
     }
 
     private void ApplyMovement()
