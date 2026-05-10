@@ -8,11 +8,13 @@ public class PlayerWeaponController : MonoBehaviour
     private Player player;
 
     [SerializeField] private Weapon currentWeapon;
+    private bool weaponReady;
+    private bool isShooting;
 
     [Header("Bullet Details")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed;
-    [SerializeField] private Transform gunPoint;
+    // [SerializeField] private Transform gunPoint;
 
     [SerializeField] private Transform weaponHolder;
     [SerializeField] private Transform aim;
@@ -30,12 +32,22 @@ public class PlayerWeaponController : MonoBehaviour
         Invoke("EquipStartingWeapon", .1f);
     }
 
+    private void Update()
+    {
+        if(isShooting)
+        {
+            Shoot();
+        }
+    }
+
     #region Slots Management
 
     private void EquipStartingWeapon() => EquipWeapon(0);
 
     private void EquipWeapon(int i)
     {
+        SetWeaponReady(false);
+
         currentWeapon = weaponSlots[i];
         // player.weaponVisuals.SwitchOffWeaponModels();
         player.weaponVisuals.PlayWeaponEquipAnimation();
@@ -64,29 +76,52 @@ public class PlayerWeaponController : MonoBehaviour
         player.weaponVisuals.SwitchOnBackupWeaponModel();
     }
 
+    public bool SetWeaponReady(bool ready) => weaponReady = ready;
+    public bool WeaponReady() => weaponReady; 
+
     #endregion
 
     private void Shoot()
     {
+        if(WeaponReady() == false)
+        {
+            return;
+        }
+
         if(currentWeapon.CanShoot() == false)
         {
             return;
         }
 
-        GameObject newBullet = Instantiate(bulletPrefab, gunPoint.transform.position, Quaternion.LookRotation(gunPoint.forward));
+        if(currentWeapon.shootType == ShootType.Single)
+        {
+            isShooting = false;
+        }
+
+        GameObject newBullet = ObjectPool.instance.GetBullet();
+        // Instantiate(bulletPrefab, gunPoint.transform.position, Quaternion.LookRotation(gunPoint.forward));
+        newBullet.transform.position = GunPoint().position;
+        newBullet.transform.rotation = Quaternion.LookRotation(GunPoint().forward);
 
         Rigidbody rbNewBullet = newBullet.GetComponent<Rigidbody>();
 
-        rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
-        rbNewBullet.linearVelocity = BulletDirection() * bulletSpeed;
-        Destroy(newBullet, 10);
+        Vector3 bulletsDirection = currentWeapon.ApplySpread(BulletDirection());
 
-        GetComponentInChildren<Animator>().SetTrigger("Fire");
+        rbNewBullet.mass = REFERENCE_BULLET_SPEED / bulletSpeed;
+        rbNewBullet.linearVelocity = bulletsDirection * bulletSpeed;
+
+        player.weaponVisuals.PlayFireAnimation();
+    }
+
+    private void Reload()
+    {
+        SetWeaponReady(false);
+        player.weaponVisuals.PlayReloadAnimation();
     }
 
     public Vector3 BulletDirection()
     {
-        Vector3 direction = (aim.position - gunPoint.position).normalized;
+        Vector3 direction = (aim.position - GunPoint().position).normalized;
 
         if(player.aim.CanAimPrecicly() == false && player.aim.Target() == null)
         {
@@ -94,7 +129,7 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         weaponHolder.LookAt(aim);
-        gunPoint.LookAt(aim);
+        GunPoint().LookAt(aim);
 
         return direction;
     }
@@ -116,22 +151,24 @@ public class PlayerWeaponController : MonoBehaviour
         return null;
     }
 
-    public Transform GunPoint() => gunPoint;
+    public Transform GunPoint() => player.weaponVisuals.CurrentWeaponModel().gunPoint;
 
     # region Input Events
 
     private void AssignInputEvents()
     {
         PlayerControls controls = player.controls;
-        controls.Character.Fire.performed += context => Shoot();
+        controls.Character.Fire.performed += context => isShooting = true;
+        controls.Character.Fire.canceled += context => isShooting = false;
+
         controls.Character.EquipSlot1.performed += context => EquipWeapon(0);
         controls.Character.EquipSlot2.performed += context => EquipWeapon(1);
         controls.Character.DropCurrentWeapon.performed += context => DropWeapon();
         controls.Character.Reload.performed += context => 
         {
-            if(currentWeapon.CanReload())
+            if(currentWeapon.CanReload() && WeaponReady())
             {
-                player.weaponVisuals.PlayReloadAnimation();
+                Reload();
             }
         };
     }

@@ -20,7 +20,7 @@ public class WeaponVisualController : MonoBehaviour
     [SerializeField] private float leftHandIK_IncreaseStep;
     private bool shouldIncreaseLeftHandIKWeight;
 
-    private bool isEquipingWeapon;
+    // private bool isEquipingWeapon;
 
     private void Start()
     {
@@ -55,12 +55,14 @@ public class WeaponVisualController : MonoBehaviour
         return weaponModel;
     }
 
+    public void PlayFireAnimation() => anim.SetTrigger("Fire");
+
     public void PlayReloadAnimation()
     {
-        if (isEquipingWeapon)
-        {
-            return;
-        }
+        // if (isEquipingWeapon)
+        // {
+        //     return;
+        // }
 
         float reloadSpeed = player.weapon.CurrentWeapon().reloadSpeed;
 
@@ -124,14 +126,14 @@ public class WeaponVisualController : MonoBehaviour
         anim.SetTrigger("EquipWeapon");
         anim.SetFloat("EquipSpeed", equipmentSpeed);
 
-        SetBusyGrabbingWeaponTo(true);
+        // SetBusyGrabbingWeaponTo(true);
     }
 
-    public void SetBusyGrabbingWeaponTo(bool busy)
-    {
-        isEquipingWeapon = busy;
-        anim.SetBool("BusyEquipingWeapon", isEquipingWeapon);
-    }
+    // public void SetBusyGrabbingWeaponTo(bool busy)
+    // {
+    //     isEquipingWeapon = busy;
+    //     anim.SetBool("BusyEquipingWeapon", isEquipingWeapon);
+    // }
 
     public void SwitchOnCurrentWeaponModel()
     {

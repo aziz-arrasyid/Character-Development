@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 165815519}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.85, y: 0.87, z: -5.3}
+  m_LocalPosition: {x: 17.93, y: 0.87, z: 0.86}
   m_LocalScale: {x: 1.2052, y: 3.0448816, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -352,30 +352,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWeaponController
   currentWeapon:
     weaponType: 0
+    shootType: 0
+    fireRate: 1
     bulletsInMagazine: 0
     magazineCapacity: 0
     totalReserveAmmo: 0
     reloadSpeed: 1
     equipmentSpeed: 1
+    baseSpread: 0
+    maximumSpread: 3
+    spreadIncreaseRate: 0.15
   bulletPrefab: {fileID: 4966439688133546491, guid: f850af5e51853a3408bfb4c41ff72123, type: 3}
   bulletSpeed: 15
-  gunPoint: {fileID: 855445567}
   weaponHolder: {fileID: 1559415776}
   aim: {fileID: 1973104064}
   maxSlots: 2
   weaponSlots:
   - weaponType: 0
-    bulletsInMagazine: 15
-    magazineCapacity: 15
+    shootType: 0
+    fireRate: 6
+    bulletsInMagazine: 30
+    magazineCapacity: 330
     totalReserveAmmo: 5345
     reloadSpeed: 1
-    equipmentSpeed: 1
+    equipmentSpeed: 1.5
+    baseSpread: 0.5
+    maximumSpread: 3
+    spreadIncreaseRate: 0.15
   - weaponType: 2
-    bulletsInMagazine: 5
-    magazineCapacity: 5
+    shootType: 1
+    fireRate: 10
+    bulletsInMagazine: 160
+    magazineCapacity: 160
     totalReserveAmmo: 6161
     reloadSpeed: 1
     equipmentSpeed: 1
+    baseSpread: 1
+    maximumSpread: 3
+    spreadIncreaseRate: 0.15
 --- !u!114 &165815527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,7 +907,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.51951903, y: 0, z: 0, w: 0.8544589}
-  m_LocalPosition: {x: 12.85, y: 17.106977, z: -13.237984}
+  m_LocalPosition: {x: 12.71, y: 21.113977, z: -0.16798306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4870,7 +4884,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 165815524}
+    TrackingTarget: {fileID: 1394473438}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -4902,7 +4916,7 @@ Transform:
   m_GameObject: {fileID: 1718046445}
   serializedVersion: 2
   m_LocalRotation: {x: 0.51951903, y: 0, z: 0, w: 0.8544589}
-  m_LocalPosition: {x: 12.85, y: 17.106977, z: -13.237984}
+  m_LocalPosition: {x: 12.71, y: 21.113977, z: -0.16798306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5151,6 +5165,52 @@ MonoBehaviour:
   holdType: 2
   gunPoint: {fileID: 182182985}
   holdPoint: {fileID: 1503901172}
+--- !u!1 &1804443233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1804443235}
+  - component: {fileID: 1804443234}
+  m_Layer: 0
+  m_Name: Object Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1804443234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804443233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e520342dbdb46a74686cb3c8793c8bb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectPool
+  bulletPrefab: {fileID: 4966439688133546491, guid: f850af5e51853a3408bfb4c41ff72123, type: 3}
+  poolSize: 1
+--- !u!4 &1804443235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804443233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.53951, y: -0, z: 1.85599}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1804448473
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5538,11 +5598,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item_Pickup
   weapon:
     weaponType: 2
+    shootType: 0
+    fireRate: 1
     bulletsInMagazine: 0
     magazineCapacity: 0
     totalReserveAmmo: 0
     reloadSpeed: 1
     equipmentSpeed: 1
+    baseSpread: 0
+    maximumSpread: 3
+    spreadIncreaseRate: 0.15
 --- !u!1001 &1908508974
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10933,3 +10998,4 @@ SceneRoots:
   - {fileID: 1874938463}
   - {fileID: 4705083953939087827}
   - {fileID: 3405479565873515573}
+  - {fileID: 1804443235}

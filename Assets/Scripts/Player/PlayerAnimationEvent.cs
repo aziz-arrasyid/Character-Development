@@ -15,6 +15,9 @@ public class PlayerAnimationEvent : MonoBehaviour
     {
         visualController.MaximizeRigWeight();
         weaponController.CurrentWeapon().RefillBullets();
+
+        weaponController.SetWeaponReady(true);
+
     }
 
     public void ReturnWig()
@@ -23,9 +26,10 @@ public class PlayerAnimationEvent : MonoBehaviour
         visualController.MaximizeLeftHandWeight();
     }
 
-    public void WeaponGrabIsOver()
+    public void WeaponEquipingIsOver()
     {
-        visualController.SetBusyGrabbingWeaponTo(false);
+        // visualController.SetBusyGrabbingWeaponTo(false);
+        weaponController.SetWeaponReady(true);
     }
 
     public void SwitchOnWeaponModel() => visualController.SwitchOnCurrentWeaponModel();
